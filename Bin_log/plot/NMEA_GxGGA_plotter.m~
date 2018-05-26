@@ -22,8 +22,6 @@ h_gps(gps.Status ~= 1) = nan;
 [x_gps, y_gps, z_gps] = llh2xyz(lat_gps, lon_gps, h_gps);
 [e_gps, n_gps, u_gps] = xyz2enu(lat_ref, lon_ref, h_ref, x_gps, y_gps, z_gps);
 
-% calc horizontal euclidian error
-en_gps = sqrt(e_gps.^2 + n_gps.^2);
 
 %% DGPS
 UTC_dgps = dgps.Hour*3600 + dgps.Minute*60 + dgps.Second;
@@ -42,8 +40,6 @@ h_dgps(dgps.Status ~= 2) = nan;
 [x_dgps, y_dgps, z_dgps] = llh2xyz(lat_dgps, lon_dgps, h_dgps);
 [e_dgps, n_dgps, u_dgps] = xyz2enu(lat_ref, lon_ref, h_ref, x_dgps, y_dgps, z_dgps);
 
-% calc horizontal euclidian error
-en_dgps = sqrt(e_gps.^2 + n_gps.^2);
 
 %% Plot
 start = max([UTC_gps(1) UTC_dgps(1)]);
@@ -60,30 +56,39 @@ hold on
 plot(e_gps(index_gps), n_gps(index_gps))
 plot(e_dgps(index_dgps), n_dgps(index_dgps))
 hold off
-title('Horizontal Error Scatterplot')
+title('Scatterplot ENU')
 xlabel('East [m]')
 ylabel('North [m]')
 legend('GPS', 'DGPS')
 
 
 figure('Name', 'East/North')
-
-subplot(121)
+subplot(131)
 hold on
-plot(timeVec_gps, en_gps(index_gps))
-plot(timeVec_dgps, en_dgps(index_dgps))
+plot(timeVec_gps, e_gps(index_gps))
+plot(timeVec_dgps, e_dgps(index_dgps))
 hold off
-title('Horizontal Error')
+title('East ENU')
 xlabel('Time [s]')
-ylabel('Error [m]')
+ylabel('East [m]')
 legend('GPS', 'DGPS')
 
-subplot(122)
+subplot(132)
+hold on
+plot(timeVec_gps, n_gps(index_gps))
+plot(timeVec_dgps, n_dgps(index_dgps))
+hold off
+title('North ENU')
+xlabel('Time [s]')
+ylabel('North [m]')
+legend('GPS', 'DGPS')
+
+subplot(133)
 hold on
 plot(timeVec_gps, u_gps(index_gps))
 plot(timeVec_dgps, u_dgps(index_dgps))
 hold off
-title('Vertical Error')
+title('Height ENU')
 xlabel('Time [s]')
-ylabel('Error [m]')
+ylabel('Up [m]')
 legend('GPS', 'DGPS')

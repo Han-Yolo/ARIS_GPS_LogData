@@ -23,10 +23,15 @@ int main(int argc, char *argv[])
 	ofstream out;
 	out.open(outFileName.c_str());
 	out << "Hour,Minute,Second";
-	out << ",Latitude[deg],Latitude[min]";
-	out << ",Longitude[deg],Longitude[min]";
+	out << ",Latitude_deg,Latitude_min";
+	out << ",Longitude_deg,Longitude_min";
 	out << ",Status";
-	out << ",Altitude[mamsl]" << endl;
+	out << ",SVs_Used";
+	out << ",HDOP";
+	out << ",Altitude_mamsl";
+	out << ",Geoid_Sep";
+	out << ",Age_of_DGNSS_Corr";
+	out << ",DGNSS_Ref_Station" << endl;
 
 	char buf[100];
  	int len;
@@ -64,11 +69,28 @@ int main(int argc, char *argv[])
 		out << string(buf, 1) << ',';
 
 		if(!read(buf, &len)) break; // SVs used
+		out << string(buf, len) << ',';
+
 		if(!read(buf, &len)) break; // HDOP
+		out << string(buf, len) << ',';
 
 		if(!read(buf, &len)) break; // altitude
+		out << string(buf) << ',';
+
+		if(!read(buf, &len)) break; // unit
+
+		if(!read(buf, &len)) break; // geoid sep.
+		out << string(buf) << ',';
+
+		if(!read(buf, &len)) break; // unit
+
+		if(!read(buf, &len)) break; // age of dgnss corr
+		out << string(buf) << ',';
+
+		if(!read(buf, &len)) break; // dgnss ref station
 		out << string(buf) << endl;
 	}
+
 	in.close();
 	out.close();
 
@@ -82,7 +104,7 @@ bool read(char *buffer, int *length)
 	for(;;)
 	{
 		if(!(in >> c)) return false;
-		if((c == ',') || (i > 20)) break;
+		if((c == ',') || (c == '*') || (i > 20)) break;
 		else buffer[i] = c;
 		i++;
 	}
