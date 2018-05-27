@@ -25,6 +25,15 @@ h_gps(gps.Status ~= 1) = nan;
 % calc horizontal euclidian error
 en_gps = sqrt(e_gps.^2 + n_gps.^2);
 
+% calc errors
+bias_en_gps = mean(en_gps);
+var_en_gps = var(en_gps);
+rms_en_gps = sqrt(sum(en_gps.^2)./length(en_gps));
+
+bias_u_gps = mean(u_gps);
+var_u_gps = var(u_gps);
+rms_u_gps = sqrt(sum(u_gps.^2)./length(u_gps));
+
 %% DGPS
 UTC_dgps = dgps.Hour*3600 + dgps.Minute*60 + dgps.Second;
 
@@ -43,7 +52,16 @@ h_dgps(dgps.Status ~= 2) = nan;
 [e_dgps, n_dgps, u_dgps] = xyz2enu(lat_ref, lon_ref, h_ref, x_dgps, y_dgps, z_dgps);
 
 % calc horizontal euclidian error
-en_dgps = sqrt(e_gps.^2 + n_gps.^2);
+en_dgps = sqrt(e_dgps.^2 + n_dgps.^2);
+
+% calc errors
+bias_en_dgps = mean(en_dgps);
+var_en_dgps = var(en_dgps);
+rms_en_dgps = sqrt(sum(en_dgps.^2)./length(en_dgps));
+
+bias_u_dgps = mean(u_dgps);
+var_u_dgps = var(u_dgps);
+rms_u_dgps = sqrt(sum(u_dgps.^2)./length(u_dgps));
 
 %% Plot
 start = max([UTC_gps(1) UTC_dgps(1)]);

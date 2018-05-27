@@ -14,6 +14,7 @@ for i = 1:length(sats)
    subplot(4, 3, i)
    plot([prc.(sats(i)) prc.(sats(i)+1)]); 
    title('Sat ' + string(sats(i)/2))
+   legend('Raw', 'Filtered')
 end
 
 legendtxt = cell(length(sats), 1);
