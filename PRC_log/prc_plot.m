@@ -1,7 +1,9 @@
+% set zero values to nan
 for i = 1:65
    prc.(i)(prc.(i) == 0) = nan;
 end
 
+% find all satellites for which a PRC was calculated
 sats = [];
 for i = 2:2:65
     if any(prc.(i))
@@ -9,6 +11,17 @@ for i = 2:2:65
     end
 end
 
+mean_prc_vec = [];
+for i = 1:length(sats)
+   k = prc.(sats(i));
+   mean_prc_vec = [mean_prc_vec k(~isnan(k))'];
+end
+mean_prc = mean(abs(mean_prc_vec))
+
+% time vector
+timeVec = (1:size(prc))./60;
+
+% plot each PRC in its own plot
 figure('Name', 'Single')
 for i = 1:length(sats)
    subplot(4, 3, i)
@@ -22,22 +35,26 @@ for i = 1:length(sats)
    legendtxt{i} = 'Sat ' + string(sats(i)/2);
 end
 
+% plot all unfiltered PRCs
 figure('Name', 'All Unfiltered')
 hold on
 for i = 1:length(sats)
-   plot(prc.(sats(i))); 
+   plot(timeVec, prc.(sats(i))); 
 end
 hold off
-xlabel('Time [s]')
+title('Pseudorange Corrections Unfiltered')
+xlabel('Time [min]')
 ylabel('Pesudorange Correction [m]')
 legend(legendtxt, 'Location', 'southwest')
 
+% plot all filtered PRCs
 figure('Name', 'All Filtered')
 hold on
 for i = 1:length(sats)
-   plot(prc.(sats(i)+1)); 
+   plot(timeVec, prc.(sats(i)+1)); 
 end
 hold off
-xlabel('Time [s]')
+title('Pseudorange Corrections with Moving Average Filter of Order 10')
+xlabel('Time [min]')
 ylabel('Pesudorange Correction [m]')
 legend(legendtxt, 'Location', 'southwest')

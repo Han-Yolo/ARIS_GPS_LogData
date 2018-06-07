@@ -1,0 +1,3 @@
+socat /dev/ttyACM1,raw,echo=0 SYSTEM:'tee gpsIn.ubx |socat - "PTY,link=/home/simon/Desktop/ttyIn,raw,echo=0,waitslave" |tee gpsOut.ubx'
+
+socat /dev/ttyACM0,raw,echo=0 SYSTEM:'tee dgpsIn.ubx |socat - "PTY,link=/home/simon/Desktop/ttyOut,raw,echo=0,waitslave" |tee dgpsOut.ubx'

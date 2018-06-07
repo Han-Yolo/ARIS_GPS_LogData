@@ -1,9 +1,15 @@
 %% Reference Position
-X_ref = 4309200.12361766;
-Y_ref = 627121.227002268;
-Z_ref = 4645596.10952142;
-[lat_ref, lon_ref, h_ref] = xyz2llh(X_ref, Y_ref, Z_ref);
+% Sonnenberg
+lat_ref = 47.043853071;
+lon_ref = 8.280169834;
+h_ref = 645.650;
 
+% Dreilinden
+% lat_ref = 47.059947412;
+% lon_ref = 8.320842792;
+% h_ref = 545.650;
+
+[x_ref, y_ref, z_ref] = llh2xyz(lat_ref, lon_ref, h_ref);
 
 %% GPS
 UTC_gps = gps.Hour*3600 + gps.Minute*60 + gps.Second;
@@ -13,7 +19,7 @@ lat_gps = gps.Latitude_deg + gps.Latitude_min/60;
 lon_gps = gps.Longitude_deg + gps.Longitude_min/60;
 h_gps = gps.Altitude_mamsl;
 
-% remove DGNSS data
+% remove corrected data
 lat_gps(gps.Status ~= 1) = nan;
 lon_gps(gps.Status ~= 1) = nan;
 h_gps(gps.Status ~= 1) = nan;
@@ -70,10 +76,11 @@ finish = min([UTC_gps(end) UTC_dgps(end)]);
 index_gps = find(UTC_gps==start):find(UTC_gps==finish);
 index_dgps = find(UTC_dgps==start):find(UTC_dgps==finish);
 
-timeVec_gps = index_gps - find(UTC_gps==start) + 1;
-timeVec_dgps = index_dgps - find(UTC_dgps==start) + 1;
+timeVec_gps = (index_gps - find(UTC_gps==start) + 1)./60;
+timeVec_dgps = (index_dgps - find(UTC_dgps==start) + 1)./60;
 
-figure('Name', 'Scatterplot/Altitude')
+
+figure('Name', 'Scatterplot')
 hold on
 plot(e_gps(index_gps), n_gps(index_gps))
 plot(e_dgps(index_dgps), n_dgps(index_dgps))
@@ -84,7 +91,7 @@ ylabel('North [m]')
 legend('GPS', 'DGPS')
 
 
-figure('Name', 'East/North')
+figure('Name', 'Horizontal / Vertical Errors')
 
 subplot(121)
 hold on
@@ -92,7 +99,7 @@ plot(timeVec_gps, en_gps(index_gps))
 plot(timeVec_dgps, en_dgps(index_dgps))
 hold off
 title('Horizontal Error')
-xlabel('Time [s]')
+xlabel('Time [min]')
 ylabel('Error [m]')
 legend('GPS', 'DGPS')
 
@@ -102,6 +109,31 @@ plot(timeVec_gps, u_gps(index_gps))
 plot(timeVec_dgps, u_dgps(index_dgps))
 hold off
 title('Vertical Error')
-xlabel('Time [s]')
+xlabel('Time [min]')
 ylabel('Error [m]')
 legend('GPS', 'DGPS')
+
+%% Debug
+% figure('Name', 'LLH Diff')
+% dlat_gps = lat_gps - lat_ref;
+% dlon_gps = lon_gps - lon_ref;
+% dh_gps = h_gps - h_ref;
+% 
+% subplot(1,3,1)
+% plot(timeVec_gps, dlat_gps(index_gps))
+% subplot(1,3,2)
+% plot(timeVec_gps, dlon_gps(index_gps))
+% subplot(1,3,3)
+% plot(timeVec_gps, dh_gps(index_gps))
+% 
+% figure('Name', 'XYZ Diff')
+% dx_gps = x_gps - x_ref;
+% dy_gps = y_gps - y_ref;
+% dz_gps = z_gps - z_ref;
+% 
+% subplot(1,3,1)
+% plot(timeVec_gps, dx_gps(index_gps))
+% subplot(1,3,2)
+% plot(timeVec_gps, dy_gps(index_gps))
+% subplot(1,3,3)
+% plot(timeVec_gps, dz_gps(index_gps))
