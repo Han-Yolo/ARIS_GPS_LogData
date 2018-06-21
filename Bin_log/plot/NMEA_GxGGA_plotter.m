@@ -1,13 +1,13 @@
 %% Reference Position
 % Sonnenberg
-lat_ref = 47.043853041;
-lon_ref = 8.280169810;
-h_ref = 645.650;
+lat_ref = 47.043853071;
+lon_ref = 8.280169834;
+h_ref = 693.842;
 
 % Dreilinden
-% lat_ref = 47.059947412;
-% lon_ref = 8.320842792;
-% h_ref = 545.650;
+% lat_ref = 47.059947422;
+% lon_ref = 8.320842799;
+% h_ref = 593.666;
 
 [x_ref, y_ref, z_ref] = llh2xyz(lat_ref, lon_ref, h_ref);
 
@@ -17,7 +17,7 @@ UTC_gps = gps.Hour*3600 + gps.Minute*60 + gps.Second;
 % calc latitude and longitude and height
 lat_gps = gps.Latitude_deg + gps.Latitude_min/60;
 lon_gps = gps.Longitude_deg + gps.Longitude_min/60;
-h_gps = gps.Altitude_mamsl;
+h_gps = gps.Altitude_mamsl + dgps.Geoid_Sep(1);
 
 % remove corrected data
 lat_gps(gps.Status ~= 1) = nan;
@@ -46,7 +46,7 @@ UTC_dgps = dgps.Hour*3600 + dgps.Minute*60 + dgps.Second;
 % calc latitude and longitude and height
 lat_dgps = dgps.Latitude_deg + dgps.Latitude_min/60;
 lon_dgps = dgps.Longitude_deg + dgps.Longitude_min/60;
-h_dgps = dgps.Altitude_mamsl;
+h_dgps = dgps.Altitude_mamsl + dgps.Geoid_Sep;
 
 % remove non DGNSS data
 lat_dgps(dgps.Status ~= 2) = nan;
