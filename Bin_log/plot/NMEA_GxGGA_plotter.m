@@ -1,7 +1,7 @@
 %% Reference Position
 % Sonnenberg
-lat_ref = 47.043853071;
-lon_ref = 8.280169834;
+lat_ref = 47.043853041;
+lon_ref = 8.280169810;
 h_ref = 645.650;
 
 % Dreilinden
